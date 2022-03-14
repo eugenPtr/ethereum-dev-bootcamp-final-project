@@ -28,10 +28,10 @@ function App() {
 
      let monthlyPaymentValue = await connectedContract.monthlyPaymentValue();
      console.log("Monthly: ", monthlyPaymentValue);
-     setMonthlyPaymentValue(monthlyPaymentValue);
+     setMonthlyPaymentValue(ethers.utils.formatEther(monthlyPaymentValue));
       
      let borrowedAmount = await connectedContract.borrowedAmount();
-     setBorrowedAmount(borrowedAmount);
+     setBorrowedAmount(ethers.utils.formatEther(borrowedAmount));
     }
     
 
@@ -46,8 +46,8 @@ function App() {
       <header className="App-header">
         <div>
           <p>Mortgage value: {mortgageValue.toString()} ETH</p>
-          <p>Monthly payment value: {ethers.utils.formatEther(borrowedAmount)} ETH</p>
-          <p>Borrowed amount: {ethers.utils.formatEther(borrowedAmount)} ETH</p>
+          <p>Monthly payment value: {monthlyPaymentValue} ETH</p>
+          <p>Borrowed amount: {borrowedAmount} ETH</p>
           <button onClick={makePayment} className="button">
             Pay
           </button>
