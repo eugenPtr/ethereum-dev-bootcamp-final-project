@@ -15,11 +15,14 @@ contract ReverseMortgage {
     // Sum of monthly payments + interest
     uint public borrowedAmount;
 
-    uint monthlyPaymentValue;
+    uint public monthlyPaymentValue;
     uint monthlyInterestBasisPoints;
 
     address public lender;
     address public borrower;
+
+    event Payment(uint timestamp);
+    event Withdrawal(uint amount, uint timestamp);
 
     constructor(address _lender,
                 address _borrower,
@@ -33,22 +36,16 @@ contract ReverseMortgage {
         termLength = _termLength;
         monthlyPaymentValue = _getMonthlyPaymentValue(mortgageValue, termLength);
         monthlyInterestBasisPoints = _getMonthlyInterestBasisPoints(annualInterestRate);
-
-        console.log("Monthly interest:", monthlyInterestBasisPoints);
-        
-
     }
 
     function pay() external payable{
-        console.log("Message value:", msg.value);
-        console.log("Monthly payment value:", monthlyPaymentValue);
         require(msg.value == monthlyPaymentValue, "Incorrect payment value");
         
         borrowedAmount += msg.value;
         // Compound interest
-        console.log("Borrowed amount:", borrowedAmount);
-        console.log("Interest value:", _getInterestValue(borrowedAmount, monthlyInterestBasisPoints));
         borrowedAmount += _getInterestValue(borrowedAmount, monthlyInterestBasisPoints);
+
+        emit Payment(block.timestamp);
         
     }
 
