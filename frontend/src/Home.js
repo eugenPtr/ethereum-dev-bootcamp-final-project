@@ -3,7 +3,7 @@ import {useState, useEffect} from "react";
 import * as Wallet from "./components/Wallet";
 import {ethers} from "ethers"
 
-function App() {
+function Home() {
   const [connectedAccount, setConnectedAccount] = useState("");
   const [connectedContract, setConnectedContract] = useState(null);
   const [mortgageValue, setMortgageValue] = useState("");
@@ -59,4 +59,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
