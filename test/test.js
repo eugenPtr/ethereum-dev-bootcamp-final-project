@@ -44,14 +44,14 @@ describe("ReverseMortgage", () => {
 
   })
 
-  describe("After a month", async () => {
+  describe("After first payment", async () => {
     beforeEach(async () => {
       let seconds = 10;
       await ethers.provider.send('evm_increaseTime', [seconds]);
       await ethers.provider.send('evm_mine', []);
     })
 
-    it("Should have made the first payment", async function () {
+    it("Should update borrowed amount", async function () {
 
       let paymentValue = mortgageValue / termLength / 12;
       let paymentValueInWei = ethers.utils.parseEther(paymentValue.toString());
@@ -69,6 +69,14 @@ describe("ReverseMortgage", () => {
       expect(currentBorrowedAmount).to.equal(expectedBorrowedAmmount.toFixed(4));
       
     });
+
+    it("Should allow borrower to withdraw funds", async () => {
+
+    })
+
+    it("Should revert when someone else tries to withdraw funds", async () => {
+      
+    })
 
   });
   
