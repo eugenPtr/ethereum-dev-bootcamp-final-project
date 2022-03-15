@@ -38,7 +38,7 @@ function App() {
   }, [connectedContract])
 
   const makePayment = async () => {
-    await connectedContract.pay({value: monthlyPaymentValue});
+    await connectedContract.pay({value: ethers.utils.parseEther(monthlyPaymentValue)});
   }
 
   return (
