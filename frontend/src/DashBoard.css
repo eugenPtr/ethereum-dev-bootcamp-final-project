@@ -1,0 +1,107 @@
+.App {
+  text-align: center;
+  flex-direction: column;
+  font-size: x-large;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-header-sub {
+  margin: none;
+  margin-bottom: 0;
+  line-height: 0.5;
+}
+.App-header-sub h1 {
+  margin: none;
+  margin-bottom: 0;
+}
+
+.App-subtitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.button {
+  border: 1px solid white;
+  width: 100px;
+  height: 33px;
+}
+.button2 {
+  border: 1px solid white;
+  background-color: #33466a;
+  color: white;
+  width: 150px;
+  height: 60px;
+  font-size: large;
+}
+.button3 {
+  border: 1px solid white;
+  background-color: #2f6a34;
+  color: white;
+  width: 150px;
+  height: 60px;
+  font-size: large;
+  margin-top: 10px;
+}
+.button2:hover {
+  background-color: #051636;
+  cursor: pointer;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+}
+.parentbox {
+  display: flex;
+  border: 1px solid white;
+  background-color: #33466a;
+  height: 700px;
+  width: 1000px;
+}
+.bufferbox {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid white;
+  background-color: #33466a;
+  height: 700px;
+  width: 1000px;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.childbox1 {
+  display: flex;
+  border: 1px solid white;
+  background-color: #282c34;
+  height: 300px;
+  width: 300px;
+  justify-content: center;
+  align-items: center;
+}

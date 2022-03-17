@@ -1,0 +1,18 @@
+.forum {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
+
+.forum label {
+ padding-bottom: 10px;
+}
+
+.forum input {
+  padding: 10px;
+}
+
+.forum p {
+  font-size: small;
+}

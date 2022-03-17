@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  flex-direction: column;
+  font-size:x-large
 }
 
 .App-logo {
@@ -8,23 +10,62 @@
 }
 
 .App-header {
+  
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 30px;
   font-size: calc(10px + 2vmin);
   color: white;
+}
+
+.App-subtitle{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+
 }
 
 .App-link {
   color: #61dafb;
 }
+.termField {
+  border: 1px solid white;
+  width: 100px;
+  height: 33px;
+}
+
+
 
 .button {
   border: 1px solid white;
   width: 100px;
   height: 33px;
 }
+.button2 {
+  border: 1px solid white;
+  background-color:#33466a;
+  color: white;
+  width: 150px;
+  height: 60px;
+  font-size: large;
+}
+.button2:hover{
+  background-color: #051636;
+  cursor: pointer;
+}
 
+a{
+  color:white;
+  text-decoration: none;
+}
+
+a:hover{
+  color:red;
+}

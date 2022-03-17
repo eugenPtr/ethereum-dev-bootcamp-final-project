@@ -1,62 +1,80 @@
-import './App.css';
+import React from "react";
 import {useState, useEffect} from "react";
 import * as Wallet from "./components/Wallet";
 import {ethers} from "ethers"
+import { Link } from "react-router-dom";
+import NavBar from "./NavBar";
+import UnconnectedNavBar from "./UnconnectedNavBar";
 
-function Home() {
-  const [connectedAccount, setConnectedAccount] = useState("");
-  const [connectedContract, setConnectedContract] = useState(null);
-  const [mortgageValue, setMortgageValue] = useState("");
-  const [monthlyPaymentValue, setMonthlyPaymentValue] = useState("");
-  const [borrowedAmount, setBorrowedAmount] = useState("");
-  
-  const checkWalletConnection = async () => {
-    await Wallet.checkIfWalletIsConnected(setConnectedAccount, setConnectedContract);
-  }
-
-  useEffect( () => {
-    checkWalletConnection();
-
-    console.log("Connected contract ", connectedContract);
-    console.log("Connected account:", connectedAccount);
-  }, [])
-
-  useEffect( async () => {
-    if (connectedContract) {
-     let mortgageValue = await connectedContract.mortgageValue();
-     setMortgageValue(mortgageValue);
-
-     let monthlyPaymentValue = await connectedContract.monthlyPaymentValue();
-     console.log("Monthly: ", monthlyPaymentValue);
-     setMonthlyPaymentValue(ethers.utils.formatEther(monthlyPaymentValue));
-      
-     let borrowedAmount = await connectedContract.borrowedAmount();
-     setBorrowedAmount(ethers.utils.formatEther(borrowedAmount));
-    }
+export default function Home() {
+    const [connectedAccount, setConnectedAccount] = useState("");
+    const [connectedContract, setConnectedContract] = useState(null);
+   
     
+    const checkWalletConnection = async () => {
+      await Wallet.checkIfWalletIsConnected(setConnectedAccount, setConnectedContract);
+    }
+  
+    useEffect( () => {
+      checkWalletConnection();
+  
+      console.log("Connected contract ", connectedContract);
+      console.log("Connected account:", connectedAccount);
+    }, []);
 
-  }, [connectedContract])
-
-  const makePayment = async () => {
-    await connectedContract.pay({value: monthlyPaymentValue});
-  }
-
-  return (
-    <div className="App">
-      <header className="App-header">
+    console.log(connectedAccount);
+    const NotConnectedHome = () => (
         <div>
-          <p>Mortgage value: {mortgageValue.toString()} ETH</p>
-          <p>Monthly payment value: {monthlyPaymentValue} ETH</p>
-          <p>Borrowed amount: {borrowedAmount} ETH</p>
-          <button onClick={makePayment} className="button">
-            Pay
-          </button>
-
-        </div>
-       
+        <div className="App">
+      <UnconnectedNavBar />
+      <header className="App-header">
+        <h1>Welcome to RMDAPP</h1>
+        <subtitle className="App-subtitle">
+          The World's first decentralized peer to peer reverse mortage
+          application.
+        </subtitle>
+        <subtitle className="App-subtitle">
+          Revolutionizing the mortgage industry.
+        </subtitle>
+        <p></p>
+        <Link to="/lendersproposal">
+          <button className="button2">Connect Wallet</button>
+        </Link>
       </header>
     </div>
+        </div>
+    );
+
+    const connectedHome = () =>(
+        <div>
+        <div className="App">
+      <NavBar />
+      <header className="App-header">
+        <h1>Welcome to RMDAPP</h1>
+        <subtitle className="App-subtitle">
+          The World's first decentralized peer to peer reverse mortage
+          application.
+        </subtitle>
+        <subtitle className="App-subtitle">
+          Revolutionizing the mortgage industry.
+        </subtitle>
+        <p></p>
+        <Link to="/lendersproposal">
+          <button className="button2">Create Proposal</button>
+        </Link>
+      </header>
+    </div>
+        </div>
+    )
+    
+   
+  return (
+      <div>
+    {connectedAccount === "" ? NotConnectedHome() : connectedHome()}
+    </div>
   );
+ 
 }
 
-export default Home;
+
+

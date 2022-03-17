@@ -1,0 +1,29 @@
+.forum{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    padding-bottom: 30px;
+
+}
+
+.forum label{
+    padding-bottom: 10px;
+}
+
+.forum input{
+    padding: 10px;
+
+}
+
+.forum p{
+    font-size: small;
+}
+
+.termField {
+    border: 1px solid white;
+    background-color: grey;
+    height: 40px;
+    padding-top: 5px;
+    color:black;
+    font-weight: 500;
+  }
