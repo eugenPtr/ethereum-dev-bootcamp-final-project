@@ -20,6 +20,8 @@ contract ReverseMortgage {
     address public lender;
     address public borrower;
 
+    uint public monthsPassed;
+
     event Payment(uint timestamp);
     event Withdrawal(uint amount, uint timestamp);
 
@@ -48,6 +50,7 @@ contract ReverseMortgage {
         borrowedAmount += msg.value;
         // Compound interest
         borrowedAmount += _getInterestValue(borrowedAmount, monthlyInterestBasisPoints);
+        monthsPassed++;
 
         emit Payment(block.timestamp);
         

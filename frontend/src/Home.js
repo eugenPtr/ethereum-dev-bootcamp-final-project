@@ -37,7 +37,7 @@ export default function Home() {
           Revolutionizing the mortgage industry.
         </subtitle>
         <p></p>
-        <Link to="/lendersproposal">
+        <Link to="/create-proposal">
           <button className="button2">Connect Wallet</button>
         </Link>
       </header>
@@ -59,7 +59,7 @@ export default function Home() {
           Revolutionizing the mortgage industry.
         </subtitle>
         <p></p>
-        <Link to="/lendersproposal">
+        <Link to="/create-proposal">
           <button className="button2">Create Proposal</button>
         </Link>
       </header>

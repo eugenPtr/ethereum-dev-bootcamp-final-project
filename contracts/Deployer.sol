@@ -21,16 +21,17 @@ contract Deployer {
 
     ReverseMortgage[] public deployedContracts;
     uint public deployedContractsCount;
+    mapping(uint => address) contractAddresses;
 
     event NewProposal(uint _proposalId, address _lender, uint _mortgageValue, uint _interestRate, uint _termLength);
-    event DeployedContract(uint _contractId, uint _proposalId);
+    event DeployedContract(uint _contractId, uint , address _contractAddress);
 
     constructor() {
         owner = msg.sender;
     }
 
-    function createProposal(uint _mortgageValue, uint _interestRate, uint _termLength) external returns(uint) {
-        proposals.push(Proposal(msg.sender, address(0), _mortgageValue, _interestRate, _termLength, false));
+    function createProposal(address _borrower, uint _mortgageValue, uint _interestRate, uint _termLength) external returns(uint) {
+        proposals.push(Proposal(msg.sender, _borrower, _mortgageValue, _interestRate, _termLength, false));
         proposalsCount++;
 
         emit NewProposal(proposalsCount-1, msg.sender, _mortgageValue, _interestRate, _termLength);
@@ -40,6 +41,8 @@ contract Deployer {
     }
 
     function acceptProposal(uint proposalId) external {
+        require(msg.sender == proposals[proposalId].borrower);
+        
         Proposal storage proposal = proposals[proposalId];
 
         ReverseMortgage rm = new ReverseMortgage(
@@ -53,11 +56,10 @@ contract Deployer {
         deployedContracts.push(rm);
         deployedContractsCount++;
 
-        emit DeployedContract(deployedContractsCount-1, proposalId);
+        contractAddresses[deployedContractsCount-1] = address(rm);
 
-        console.log("Newly deployed contract address:", address(rm));
+        emit DeployedContract(deployedContractsCount-1, proposalId, address(rm));
 
-        proposal.borrower = msg.sender;
         proposal.accepted = true; 
 
     }

@@ -1,6 +1,5 @@
 import ReverseMortgage from "../contracts/ReverseMortgage.json"
 import {ethers} from "ethers";
-const CONTRACT_ADDRESS = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
 
 
 export const checkIfWalletIsConnected = async (connectedAccountSetter, connectedContractSetter) => {
@@ -20,8 +19,11 @@ export const checkIfWalletIsConnected = async (connectedAccountSetter, connected
         }
 
         // Connect to contract
-        let contract = new ethers.Contract(CONTRACT_ADDRESS, ReverseMortgage.abi, signer);
-        await connectedContractSetter(contract);
+        if (window.reverseMortgageAddress) {
+            let contract = new ethers.Contract(window.reverseMortgageAddress, ReverseMortgage.abi, signer);
+            await connectedContractSetter(contract);
+        }
+        
 
     } else {
         console.log("Please connect metamask wallet")

@@ -8,12 +8,42 @@ import NavBar from './NavBar';
 function Dashboard() {
   const [connectedAccount, setConnectedAccount] = useState("");
   const [connectedContract, setConnectedContract] = useState(null);
+  const [borrowerAddress, setBorrowerAddress] = useState("");
+  const [lenderAddress, setLenderAddress] = useState("");
   const [mortgageValue, setMortgageValue] = useState("");
   const [monthlyPaymentValue, setMonthlyPaymentValue] = useState("");
   const [borrowedAmount, setBorrowedAmount] = useState("");
+  const [monthsPassed, setMonthsPassed] = useState(0);
+  const [termLength, setTermLength] = useState(0);
   
   const checkWalletConnection = async () => {
     await Wallet.checkIfWalletIsConnected(setConnectedAccount, setConnectedContract);
+  }
+
+
+  const fetchContractData = async () => {
+    let borrowerAddress = await connectedContract.borrower();
+     console.log("Borrower address:", borrowerAddress);
+     setBorrowerAddress(borrowerAddress);
+
+     let lenderAddress = await connectedContract.lender();
+     console.log("Lender address: ", lenderAddress);
+     setLenderAddress(lenderAddress);
+
+     let mortgageValue = await connectedContract.mortgageValue();
+     setMortgageValue(mortgageValue);
+
+     let monthlyPaymentValue = await connectedContract.monthlyPaymentValue();
+     setMonthlyPaymentValue(ethers.utils.formatEther(monthlyPaymentValue));
+      
+     let borrowedAmount = await connectedContract.borrowedAmount();
+     setBorrowedAmount(ethers.utils.formatEther(borrowedAmount));
+
+     let monthsPassed = await connectedContract.monthsPassed();
+     setMonthsPassed(monthsPassed.toNumber());
+
+     let termLength = await connectedContract.termLength();
+     setTermLength(termLength);
   }
 
   useEffect( () => {
@@ -25,15 +55,11 @@ function Dashboard() {
 
   useEffect( async () => {
     if (connectedContract) {
-     let mortgageValue = await connectedContract.mortgageValue();
-     setMortgageValue(mortgageValue);
+      fetchContractData();
 
-     let monthlyPaymentValue = await connectedContract.monthlyPaymentValue();
-     console.log("Monthly: ", monthlyPaymentValue);
-     setMonthlyPaymentValue(ethers.utils.formatEther(monthlyPaymentValue));
-      
-     let borrowedAmount = await connectedContract.borrowedAmount();
-     setBorrowedAmount(ethers.utils.formatEther(borrowedAmount));
+      connectedContract.on("Payment", () => {
+        fetchContractData();
+      })
     }
     
 
@@ -41,6 +67,10 @@ function Dashboard() {
 
   const makePayment = async () => {
     await connectedContract.pay({value: ethers.utils.parseEther(monthlyPaymentValue)});
+  }
+
+  const withdrawFunds = async () => {
+    await connectedContract.withdraw();
   }
 
   /*
@@ -54,33 +84,51 @@ function Dashboard() {
 
         </div>
   */
+ const renderBorrowerView = () => (
+  <button onClick={withdrawFunds} className="button3">Withdraw funds</button>
+ )
+
+ const renderLenderView = () => (
+  <button onClick={makePayment} className="button3">Pay</button>
+ )
+
+ const renderNoDeployedContractDashboard = () => (
+   <p> There is currently no deployed contract for this account</p>
+ )
+
+ const renderContractDashboard = () => (
+  <div>
+
+    <div className="App-header-sub">
+      <h1>RM Contract Dashboard</h1>
+      <p>Contract Address: {window.reverseMortgageAddress}</p>
+    </div>
+
+    <div className="parentbox">
+      <div className="bufferbox">
+        <div className="childbox1">Accumulated Loan: {borrowedAmount}</div>
+        <div className="childbox1">Loan Progress: {monthsPassed}/{termLength*12}</div>
+        <div className="childbox1">Total Principle Paid: {monthlyPaymentValue * monthsPassed}</div>
+        <div className="childbox1">Total Interest Paid {borrowedAmount - (monthlyPaymentValue * monthsPassed)}</div>
+        <div className="childbox1">Monthly Principle: {monthlyPaymentValue} ETH</div>
+        <div className="childbox1">Transaction Fees</div>
+      </div>
+    </div>
+
+    { connectedAccount === borrowerAddress ? renderBorrowerView() : renderLenderView()}
+
+  </div>
+ )
+
+ 
 
   return (
     <div className="App">
     <NavBar/>
       <header className="App-header">
-      <div className="App-header-sub">
-      <h1>RM Contract Dashboard</h1>
-      <p>Contract Address:</p>
-      </div>
-      <div className="parentbox">
-
-      <div className="bufferbox">
-  
-      <div className="childbox1">Mortgage value: {mortgageValue.toString()} ETH Accumulated Loan</div>
-      <div className="childbox1">Loan Progress</div>
-      <div className="childbox1">Total Principle Paid</div>
-      <div className="childbox1">Total Interest Paid</div>
-      <div className="childbox1">Monthly Principle</div>
-      <div className="childbox1">Transaction Fees</div>
-  
-      </div>
-      
-      
-      </div>
-      <button onClick={makePayment} className="button3">Pay</button>
-       
+        {connectedContract ? renderContractDashboard() : renderNoDeployedContractDashboard()}
       </header>
+    
     </div>
   );
 }

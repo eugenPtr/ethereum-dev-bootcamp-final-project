@@ -31,7 +31,7 @@ describe("Deployer", () => {
     });
 
     it("Should increase proposalsCount when a new proposal is created", async () => {
-        const createProposalTx = await contract.createProposal(mortgageValue, interestRate, termLength);
+        const createProposalTx = await contract.createProposal(borrower.address, mortgageValue, interestRate, termLength);
         await createProposalTx.wait();
 
         expect((await contract.proposalsCount()).toString()).to.equal("1");
@@ -40,19 +40,9 @@ describe("Deployer", () => {
 
   })
 
-  describe("When a proposal has been created", async () => {
-    beforeEach(async () => {
-        const createProposalTx = await contract.connect(lender).createProposal(mortgageValue, interestRate, termLength);
-        await createProposalTx.wait();
-    })
-
-
-
-  });
-
   describe("When a proposal is accepted", async () => {
     beforeEach(async () => {
-        const createProposalTx = await contract.connect(lender).createProposal(mortgageValue, interestRate, termLength);
+        const createProposalTx = await contract.connect(lender).createProposal(borrower.address, mortgageValue, interestRate, termLength);
         await createProposalTx.wait();
     });
 

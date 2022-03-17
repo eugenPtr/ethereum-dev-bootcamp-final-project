@@ -1,6 +1,11 @@
 import React from "react";
 import NavBar from "./NavBar";
-import './LendersProposal.css'
+import './LendersProposal.css';
+import {ethers} from "ethers";
+import Deployer from "./contracts/Deployer.json";
+import {DEPLOYER_CONTRACT} from "./utils.js";
+
+//const DEPLOYER_CONTRACT = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export default function LendersProposal() {
   const [borrowerAddress, setBorrowerAddress] = React.useState("");
@@ -9,7 +14,11 @@ export default function LendersProposal() {
   const [interestRate, setInterestRate] = React.useState("");
   const [acceptedTerms, setAcceptedTerms] = React.useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const deployerContract = new ethers.Contract(DEPLOYER_CONTRACT, Deployer.abi, signer);
+
     console.log(`
       Borrower Address: ${borrowerAddress}
       Maximum Loan Amount: ${maxLoanAmount}
@@ -19,6 +28,8 @@ export default function LendersProposal() {
     `);
 
     event.preventDefault();
+
+    let createProposalTx = await deployerContract.createProposal(borrowerAddress, maxLoanAmount, interestRate, termLength);
   };
 
   return (

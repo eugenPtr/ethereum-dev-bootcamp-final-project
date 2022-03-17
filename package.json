@@ -19,6 +19,7 @@
     "hardhat": "^2.9.1"
   },
   "dependencies": {
+    "bignumber": "^1.1.0",
     "ethers": "^5.5.4"
   }
 }

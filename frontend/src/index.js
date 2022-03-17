@@ -12,8 +12,8 @@ ReactDOM.render(
   <Routes>
   <Route exact path="/" element={<Home/>}/>
   <Route exact path="/dashboard" element={<Dashboard/>}/>
-  <Route exact path="/lendersproposal" element={<LendersProposal/>}/>
-  <Route exact path="/borrowersproposal" element={<BorrowersProposal/>}/>
+  <Route exact path="/create-proposal" element={<LendersProposal/>}/>
+  <Route exact path="/proposals" element={<BorrowersProposal/>}/>
   </Routes>
 </BrowserRouter>,
   document.getElementById('root')
