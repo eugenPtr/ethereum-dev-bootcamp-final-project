@@ -5,6 +5,10 @@ describe("ReverseMortgage", () => {
   const mortgageValue = 900;
   const annualInterestRate = 5;
   const termLength = 30;
+  
+  const paymentValue = mortgageValue / termLength / 12;
+  const monthlyInterestRate = Number.parseFloat( (annualInterestRate / 12).toPrecision(3) );
+  const expectedBorrowedAmountAfterOneMonth = paymentValue + (paymentValue * monthlyInterestRate / 100);
 
   let contract;
   let lenderSigner;
@@ -44,31 +48,43 @@ describe("ReverseMortgage", () => {
 
   })
 
-  describe("After a month", async () => {
+  describe("After first payment", async () => {
     beforeEach(async () => {
-      let seconds = 10;
-      await ethers.provider.send('evm_increaseTime', [seconds]);
-      await ethers.provider.send('evm_mine', []);
-    })
-
-    it("Should have made the first payment", async function () {
-
-      let paymentValue = mortgageValue / termLength / 12;
       let paymentValueInWei = ethers.utils.parseEther(paymentValue.toString());
 
       const payTx = await contract.connect(lenderSigner).pay({value: paymentValueInWei});
       // Wait for the tx to be mined  
       await payTx.wait();
+    })
 
+    it("Should update borrowed amount", async function () {
       
       let currentBorrowedAmount = ethers.utils.formatEther(await contract.borrowedAmount()).toString();
       
-      let monthlyInterestRate = Number.parseFloat( (annualInterestRate / 12).toPrecision(3) );
-      let expectedBorrowedAmmount = paymentValue + (paymentValue * monthlyInterestRate / 100);
-      
-      expect(currentBorrowedAmount).to.equal(expectedBorrowedAmmount.toFixed(4));
+      expect(currentBorrowedAmount).to.equal(expectedBorrowedAmountAfterOneMonth.toFixed(4));
       
     });
+
+    it("Should allow borrower to withdraw funds", async () => {
+        const previousContractBalance = await ethers.provider.getBalance(contract.address);
+        expect(ethers.utils.formatEther(previousContractBalance))
+          .to.equal(paymentValue.toString());
+        
+        const withdrawTx = await contract.connect(borrowerSigner).withdraw();
+        await withdrawTx.wait();
+
+        const currentContractBalance = await ethers.provider.getBalance(contract.address);
+        expect(ethers.utils.formatEther(currentContractBalance))
+          .to.equal("0.0");
+
+
+    })
+
+    it("Should revert when someone else tries to withdraw funds", async () => {
+      expect(contract.connect(lenderSigner).withdraw())
+        .to.be.revertedWith('Only the borrower can call this function');
+      
+    })
 
   });
   

@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "abdk-libraries-solidity/ABDKMathQuad.sol";
 import "hardhat/console.sol";
 
 contract ReverseMortgage {
@@ -36,6 +35,11 @@ contract ReverseMortgage {
         termLength = _termLength;
         monthlyPaymentValue = _getMonthlyPaymentValue(mortgageValue, termLength);
         monthlyInterestBasisPoints = _getMonthlyInterestBasisPoints(annualInterestRate);
+    }
+
+    function withdraw() external payable {
+        require(msg.sender == borrower, "Only the borrower can call this function");
+        payable(borrower).transfer(address(this).balance);
     }
 
     function pay() external payable{
