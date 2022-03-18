@@ -63,16 +63,16 @@ function Dashboard() {
       <h1>RM Contract Dashboard</h1>
       <p>Contract Address:</p>
       </div>
-      <div className="parentbox">
+      <div className="parentboxDashboard">
 
-      <div className="bufferbox">
+      <div className="bufferboxDashboard">
   
-      <div className="childbox1">Mortgage value: {mortgageValue.toString()} ETH Accumulated Loan</div>
-      <div className="childbox1">Loan Progress</div>
-      <div className="childbox1">Total Principle Paid</div>
-      <div className="childbox1">Total Interest Paid</div>
-      <div className="childbox1">Monthly Principle</div>
-      <div className="childbox1">Transaction Fees</div>
+      <div className="childboxDashboard">Mortgage value: {mortgageValue.toString()} ETH Accumulated Loan</div>
+      <div className="childboxDashboard">Loan Progress</div>
+      <div className="childboxDashboard">Total Principle Paid</div>
+      <div className="childboxDashboard">Total Interest Paid</div>
+      <div className="childboxDashboard">Monthly Principle</div>
+      <div className="childboxDashboard">Transaction Fees</div>
   
       </div>
       

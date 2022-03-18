@@ -12,7 +12,10 @@ const NavBar = () => (
         <div className='navbar__item'>
         <Link to="/dashboard">Dashboard</Link>
         </div>
-        <div className='navbar__item'>Marketplace</div>
+        <div className='navbar__item'>
+        <Link to="/marketplace">Marketplace</Link>
+        </div>
+    
         <div className='navbar__item'>Help</div>        
     </header>
     </div>

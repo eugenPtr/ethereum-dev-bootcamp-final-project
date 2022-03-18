@@ -4,11 +4,6 @@
   font-size: x-large;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -79,29 +74,47 @@ a {
 a:hover {
   color: red;
 }
-.parentboxDashboard {
-  display: flex;
-  border: 1px solid white;
-  background-color: #33466a;
-  height: 700px;
-  width: 1000px;
+
+.parentbox{
+    display:flex;
+    border-color: #282c34;
+    background-color: #282c34;
+    height: 700px;
+    width: 1000px;
+
+  
 }
-.bufferboxDashboard {
-  display: flex;
-  flex-wrap: wrap;
-  border: 1px solid white;
-  background-color: #33466a;
-  height: 700px;
-  width: 1000px;
-  justify-content: space-evenly;
-  align-items: center;
+.bufferbox{
+    display:flex;
+    border-color: #282c34;
+    flex-wrap: wrap;
+    background-color: #282c34;
+    height: 700px;
+    width: 1000px;
+    justify-content: space-evenly;
+    align-items: center;
+
+    
+  
 }
-.childboxDashboard {
-  display: flex;
-  border: 1px solid white;
-  background-color: #282c34;
-  height: 300px;
-  width: 300px;
-  justify-content: center;
-  align-items: center;
+.childbox1{
+    display:flex;
+    padding:10px;
+    border:#33466a;
+    border-radius: 10px;
+    background-color: #33466a;
+    height: 300px;
+    width: 300px;
+    justify-content: center;
+    flex-direction: column;
+  
+}
+
+.type{
+
+    justify-items: center;
+}
+
+.terms{
+    
 }
