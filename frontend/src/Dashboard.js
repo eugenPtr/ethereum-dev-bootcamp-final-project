@@ -3,6 +3,9 @@ import {useState, useEffect} from "react";
 import * as Wallet from "./components/Wallet";
 import {ethers} from "ethers"
 import NavBar from './NavBar';
+import {DEPLOYER_CONTRACT} from "./utils.js";
+import Deployer from "./contracts/Deployer.json";
+import ReverseMortgage from "./contracts/ReverseMortgage.json";
 
 
 function Dashboard() {
@@ -15,10 +18,21 @@ function Dashboard() {
   const [borrowedAmount, setBorrowedAmount] = useState("");
   const [monthsPassed, setMonthsPassed] = useState(0);
   const [termLength, setTermLength] = useState(0);
+  const [contractBalance, setContractBalance] = useState("");
   
-  const checkWalletConnection = async () => {
-    await Wallet.checkIfWalletIsConnected(setConnectedAccount, setConnectedContract);
-  }
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const deployerContract = new ethers.Contract(DEPLOYER_CONTRACT, Deployer.abi, signer);
+
+
+  useEffect( async () => {
+    let accounts = await provider.send("eth_requestAccounts", []);
+        
+    if (accounts.length != 0) {
+        console.log("Found authorized account:", accounts[0]);
+        setConnectedAccount(accounts[0]);
+    }
+  })
 
 
   const fetchContractData = async () => {
@@ -44,26 +58,37 @@ function Dashboard() {
 
      let termLength = await connectedContract.termLength();
      setTermLength(termLength);
+
+     let contractBalance = await provider.getBalance(connectedContract.address);
+     console.log("Contract balance: ", ethers.utils.formatEther(contractBalance));
+     setContractBalance(ethers.utils.formatEther(contractBalance));
   }
 
-  useEffect( () => {
-    checkWalletConnection();
-
-    console.log("Connected contract ", connectedContract);
-    console.log("Connected account:", connectedAccount);
-  }, [])
+  useEffect( async () => {
+   
+    const reverseMortgageAddress = await deployerContract.contractAddresses(0);
+    if (reverseMortgageAddress != "0x0000000000000000000000000000000000000000") {
+      const reverseMortgageContract = new ethers.Contract(reverseMortgageAddress, ReverseMortgage.abi, signer);
+      console.log("Reverse Mortgage Address:", reverseMortgageContract.address);
+      setConnectedContract(reverseMortgageContract);
+    } else {
+      console.log("No reverse mortgage address");
+    }
+  }, [connectedAccount])
 
   useEffect( async () => {
     if (connectedContract) {
-      fetchContractData();
-
-      connectedContract.on("Payment", () => {
-        fetchContractData();
+      await fetchContractData();
+      connectedContract.on("Payment",async () => {
+        await fetchContractData();
+      })
+      connectedContract.on("Withdrawal", async () => {
+        await fetchContractData();
       })
     }
-    
 
-  }, [connectedContract])
+
+  }, [connectedContract]);
 
   const makePayment = async () => {
     await connectedContract.pay({value: ethers.utils.parseEther(monthlyPaymentValue)});
@@ -73,20 +98,12 @@ function Dashboard() {
     await connectedContract.withdraw();
   }
 
-  /*
-   <div>
-          <p>Mortgage value: {mortgageValue.toString()} ETH</p>
-          <p>Monthly payment value: {monthlyPaymentValue} ETH</p>
-          <p>Borrowed amount: {borrowedAmount} ETH</p>
-          <button onClick={makePayment} className="button2">
-            Pay
-          </button>
-
-        </div>
-  */
  const renderBorrowerView = () => (
-  <button onClick={withdrawFunds} className="button3">Withdraw funds</button>
- )
+   <div>
+      <p>Contract balance: {contractBalance} ETH</p>
+      <button onClick={withdrawFunds} className="button3">Withdraw funds</button>
+   </div>
+  )
 
  const renderLenderView = () => (
   <button onClick={makePayment} className="button3">Pay</button>
@@ -101,21 +118,21 @@ function Dashboard() {
 
     <div className="App-header-sub">
       <h1>RM Contract Dashboard</h1>
-      <p>Contract Address: {window.reverseMortgageAddress}</p>
+      <p>Contract Address: {connectedContract.address}</p>
     </div>
 
     <div className="parentbox">
       <div className="bufferbox">
         <div className="childbox1">Accumulated Loan: {borrowedAmount}</div>
         <div className="childbox1">Loan Progress: {monthsPassed}/{termLength*12}</div>
-        <div className="childbox1">Total Principle Paid: {monthlyPaymentValue * monthsPassed}</div>
-        <div className="childbox1">Total Interest Paid {borrowedAmount - (monthlyPaymentValue * monthsPassed)}</div>
+        <div className="childbox1">Total Principle Paid: {monthlyPaymentValue * monthsPassed} ETH</div>
+        <div className="childbox1">Total Interest Paid {borrowedAmount - (monthlyPaymentValue * monthsPassed)} ETH</div>
         <div className="childbox1">Monthly Principle: {monthlyPaymentValue} ETH</div>
         <div className="childbox1">Transaction Fees</div>
       </div>
     </div>
 
-    { connectedAccount === borrowerAddress ? renderBorrowerView() : renderLenderView()}
+    { connectedAccount.toLowerCase() === borrowerAddress.toLowerCase() ? renderBorrowerView() : renderLenderView()}
 
   </div>
  )

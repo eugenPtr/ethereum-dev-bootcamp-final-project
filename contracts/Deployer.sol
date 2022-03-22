@@ -21,7 +21,7 @@ contract Deployer {
 
     ReverseMortgage[] public deployedContracts;
     uint public deployedContractsCount;
-    mapping(uint => address) contractAddresses;
+    mapping(uint => address) public contractAddresses;
 
     event NewProposal(uint _proposalId, address _lender, uint _mortgageValue, uint _interestRate, uint _termLength);
     event DeployedContract(uint _contractId, uint , address _contractAddress);
@@ -31,6 +31,8 @@ contract Deployer {
     }
 
     function createProposal(address _borrower, uint _mortgageValue, uint _interestRate, uint _termLength) external returns(uint) {
+        require(msg.sender != _borrower, "Please use a different borrower address");
+
         proposals.push(Proposal(msg.sender, _borrower, _mortgageValue, _interestRate, _termLength, false));
         proposalsCount++;
 

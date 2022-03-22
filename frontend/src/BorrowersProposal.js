@@ -14,7 +14,7 @@ export default function BorrowersProposal() {
   const [termLength, setTermLength] = React.useState("");
   const [interestRate, setInterestRate] = React.useState("");
   const [acceptedTerms, setAcceptedTerms] = React.useState(false);
-  const [existingProposals, setExistingProposals] = React.useState(false);
+  const [validProposals, setValidProposals] = React.useState(false);
   const [connectedAccount, setConnectedAccount] = React.useState("");
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -41,17 +41,23 @@ export default function BorrowersProposal() {
     let proposalCount = await deployerContract.proposalsCount();
     
     if (proposalCount.toNumber() > 0) {
-      setExistingProposals(true);
 
       let proposal = await deployerContract.proposals(0);
-      setLenderAddress(proposal.lender);
+      setLenderAddress(proposal.lender.toString());
       setBorrowerAddress(proposal.borrower);
       setMaxLoanAmount(proposal.mortgageValue.toNumber());
       setTermLength(proposal.termLength.toNumber());
       setInterestRate(proposal.interestRate.toNumber());
 
+      console.log(proposal);
+      if (proposal.accepted === false) {
+        setValidProposals(true);
+      }
+
+      console.log(connectedAccount, proposal.lender, proposal.borrower);
+
     }
-  }, [])
+  }, [connectedAccount])
 
   const handleSubmit = async (event) => {
     console.log(`
@@ -69,7 +75,7 @@ export default function BorrowersProposal() {
 
   const renderNoProposalsForm = () => (
     <div>
-      <p> There are currently no proposals. Please create one</p>
+      <p> There are currently no proposals for you.</p>
     </div>
   )
 
@@ -126,11 +132,7 @@ export default function BorrowersProposal() {
 
       <header className="App-header">
         <h1>Proposals</h1>
-        {existingProposals === false ? renderNoProposalsForm() : renderProposalForm() }
-            {/* connectedAccount === borrowerAddress ? renderProposalForm() : renderConnectBorrowerWallet()} */}
-
-        <p>Connected account: {connectedAccount}</p>
-        <p>Borrower address: {borrowerAddress}</p>
+        {(validProposals && borrowerAddress.toLowerCase() == connectedAccount.toLowerCase()) ? renderProposalForm() : renderNoProposalsForm()} 
       </header>
     </div>
   );

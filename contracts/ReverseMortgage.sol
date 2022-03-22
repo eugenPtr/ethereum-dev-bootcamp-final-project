@@ -4,11 +4,8 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract ReverseMortgage {
-    // Borrowed value in USD
     uint public mortgageValue;
-    // Percentage
     uint public annualInterestRate;
-    // Number of years
     uint public termLength;
 
     // Sum of monthly payments + interest
@@ -41,7 +38,10 @@ contract ReverseMortgage {
 
     function withdraw() external payable {
         require(msg.sender == borrower, "Only the borrower can call this function");
-        payable(borrower).transfer(address(this).balance);
+        uint amount = address(this).balance;
+        payable(borrower).transfer(amount);
+        
+        emit Withdrawal(amount, block.timestamp);
     }
 
     function pay() external payable{
